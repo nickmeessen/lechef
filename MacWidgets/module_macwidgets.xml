@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_macwidgets" default="compile.module.macwidgets">
+  <dirname property="module.macwidgets.basedir" file="${ant.file.module_macwidgets}"/>
+  
+  <property name="module.jdk.home.macwidgets" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.macwidgets" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.macwidgets" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.macwidgets" value="${compiler.args}"/>
+  
+  <property name="macwidgets.output.dir" value="/Users/Nick/Projects/LeChef/out/production/MacWidgets"/>
+  <property name="macwidgets.testoutput.dir" value="/Users/Nick/Projects/LeChef/out/test/MacWidgets"/>
+  
+  <path id="macwidgets.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="macwidgets.module.classpath">
+    <path refid="${module.jdk.classpath.macwidgets}"/>
+    <pathelement location="${basedir}/lib/forms-1.2.1.jar"/>
+    <pathelement location="${basedir}/lib/junit.jar"/>
+  </path>
+  
+  <path id="macwidgets.runtime.module.classpath">
+    <pathelement location="${macwidgets.output.dir}"/>
+    <pathelement location="${macwidgets.testoutput.dir}"/>
+    <pathelement location="${basedir}/lib/forms-1.2.1.jar"/>
+    <pathelement location="${basedir}/lib/junit.jar"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.macwidgets">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.macwidgets">
+    <patternset refid="excluded.from.module.macwidgets"/>
+  </patternset>
+  
+  <path id="macwidgets.module.sourcepath">
+    <dirset dir="${module.macwidgets.basedir}">
+      <include name="demo"/>
+      <include name="source"/>
+      <include name="unittest"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.macwidgets" depends="compile.module.macwidgets.production,compile.module.macwidgets.tests" description="Compile module MacWidgets"/>
+  
+  <target name="compile.module.macwidgets.production" description="Compile module MacWidgets; production classes">
+    <mkdir dir="${macwidgets.output.dir}"/>
+    <javac2 destdir="${macwidgets.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.macwidgets}/javac">
+      <compilerarg line="${compiler.args.macwidgets}"/>
+      <bootclasspath refid="macwidgets.module.bootclasspath"/>
+      <classpath refid="macwidgets.module.classpath"/>
+      <src refid="macwidgets.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.macwidgets"/>
+    </javac2>
+    
+    <copy todir="${macwidgets.output.dir}">
+      <fileset dir="${module.macwidgets.basedir}/demo">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.macwidgets.basedir}/source">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+      <fileset dir="${module.macwidgets.basedir}/unittest">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.macwidgets.tests" depends="compile.module.macwidgets.production" description="compile module MacWidgets; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.macwidgets" description="cleanup module">
+    <delete dir="${macwidgets.output.dir}"/>
+    <delete dir="${macwidgets.testoutput.dir}"/>
+  </target>
+</project>

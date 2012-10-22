@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_lechef" default="compile.module.lechef">
+  <dirname property="module.lechef.basedir" file="${ant.file.module_lechef}"/>
+  
+  <property name="module.jdk.home.lechef" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.lechef" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.lechef" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.lechef" value="${compiler.args}"/>
+  
+  <property name="lechef.output.dir" value="${module.lechef.basedir}/out/production/LeChef"/>
+  <property name="lechef.testoutput.dir" value="${module.lechef.basedir}/out/test/LeChef"/>
+  
+  <path id="lechef.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="lechef.module.classpath">
+    <path refid="${module.jdk.classpath.lechef}"/>
+    <pathelement location="${macwidgets.output.dir}"/>
+    <pathelement location="${macwidgets.testoutput.dir}"/>
+  </path>
+  
+  <path id="lechef.runtime.module.classpath">
+    <pathelement location="${lechef.output.dir}"/>
+    <pathelement location="${lechef.testoutput.dir}"/>
+    <path refid="macwidgets.runtime.module.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.lechef">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.lechef">
+    <patternset refid="excluded.from.module.lechef"/>
+  </patternset>
+  
+  <path id="lechef.module.sourcepath">
+    <dirset dir="${module.lechef.basedir}">
+      <include name="src"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.lechef" depends="compile.module.lechef.production,compile.module.lechef.tests" description="Compile module LeChef"/>
+  
+  <target name="compile.module.lechef.production" depends="compile.module.macwidgets" description="Compile module LeChef; production classes">
+    <mkdir dir="${lechef.output.dir}"/>
+    <javac2 destdir="${lechef.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.lechef}/javac">
+      <compilerarg line="${compiler.args.lechef}"/>
+      <bootclasspath refid="lechef.module.bootclasspath"/>
+      <classpath refid="lechef.module.classpath"/>
+      <src refid="lechef.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.lechef"/>
+    </javac2>
+    
+    <copy todir="${lechef.output.dir}">
+      <fileset dir="${module.lechef.basedir}/src">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.lechef.tests" depends="compile.module.lechef.production" description="compile module LeChef; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.lechef" description="cleanup module">
+    <delete dir="${lechef.output.dir}"/>
+    <delete dir="${lechef.testoutput.dir}"/>
+  </target>
+</project>
